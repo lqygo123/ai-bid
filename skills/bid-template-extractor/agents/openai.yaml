@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bid Template Extractor"
+  short_description: "Semantic-boundary extraction for bid templates"
+  default_prompt: "Use $bid-template-extractor for a single tender file: run scan, decide boundaries semantically (not keyword-only), then run deterministic extract. For editable PDF output, use --pdf-converter pdf2docx."
