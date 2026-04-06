@@ -9,11 +9,11 @@ from pathlib import Path
 from docx import Document
 
 
-INDEX_KEYS = ("序号", "序", "编号")
-CONTENT_KEYS = ("内容",)
-REQUIREMENT_KEYS = ("要求", "标准", "响应要求")
-COMMITMENT_KEYS = ("承诺", "响应内容", "响应承诺")
-DEVIATION_KEYS = ("偏离", "偏差")
+INDEX_KEYS = ("序号", "序", "编号", "index")
+CONTENT_KEYS = ("内容", "项目", "content")
+REQUIREMENT_KEYS = ("要求", "标准", "招标文件要求", "响应要求", "requirement")
+COMMITMENT_KEYS = ("承诺", "投标情况", "响应内容", "响应承诺", "commitment")
+DEVIATION_KEYS = ("偏离", "偏差", "deviation")
 
 
 def normalize_text(text: str) -> str:
@@ -55,7 +55,7 @@ def classify_header_row(texts: list[str]) -> dict | None:
         if "deviation" not in roles and has_any(text, DEVIATION_KEYS):
             roles["deviation"] = idx
             continue
-    required = {"content", "requirement", "commitment", "deviation"}
+    required = {"requirement", "commitment", "deviation"}
     if required.issubset(roles):
         return roles
     return None
@@ -169,14 +169,23 @@ def fill_from_rows(table, header_idx: int, roles: dict[str, int], rows: list[dic
             set_cell_text(cell, "")
         if "index" in roles:
             set_cell_text(row.cells[roles["index"]], str(row_data.get("index", "")))
-        set_cell_text(row.cells[roles["content"]], row_data.get("content", ""))
-        set_cell_text(row.cells[roles["requirement"]], row_data.get("requirement_text", ""))
-        set_cell_text(row.cells[roles["commitment"]], row_data.get("commitment_text", ""))
+        if "content" in roles:
+            set_cell_text(row.cells[roles["content"]], row_data.get("content", ""))
+            requirement_value = row_data.get("requirement_text", "")
+            commitment_value = row_data.get("commitment_text", "")
+        else:
+            content = row_data.get("content", "").strip()
+            requirement_text = row_data.get("requirement_text", "").strip()
+            commitment_text = row_data.get("commitment_text", "").strip()
+            requirement_value = f"{content}：{requirement_text}" if content else requirement_text
+            commitment_value = f"{content}：{commitment_text}" if content else commitment_text
+        set_cell_text(row.cells[roles["requirement"]], requirement_value)
+        set_cell_text(row.cells[roles["commitment"]], commitment_value)
         set_cell_text(row.cells[roles["deviation"]], row_data.get("deviation_note", ""))
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Fill 商务和技术偏离表 using template-driven semantic column mapping")
+    parser = argparse.ArgumentParser(description="Fill deviation table using template-driven semantic column mapping")
     parser.add_argument("template_path", type=Path)
     parser.add_argument("rows_path", type=Path)
     parser.add_argument("output_path", type=Path)
