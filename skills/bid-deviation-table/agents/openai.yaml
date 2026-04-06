@@ -1,4 +1,0 @@
-interface:
-  display_name: "Bid Deviation Workflow"
-  short_description: "Semantic split plus template-driven filling"
-  default_prompt: "Use $bid-deviation-table to scan the tender, decide the semantic row split for this file, generate rows.json, and fill the deviation table with the fixed commitment sentence style."

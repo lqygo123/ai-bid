@@ -4,17 +4,17 @@
 - 仅实现 `计划.md` 第一步：提取“响应/投标/应答文件格式”并生成模板。
 - 第二步及后续暂不实现。
 
-## 关键 skill
-- `$doc`：读取 `.docx/.doc/.pdf`。
-- `$bid-template-extractor`：执行“LLM判断边界 + 定向抽取”。
+## 关键技能
+- `$文档`：读取 `.docx/.doc/.pdf`。
+- `$投标模板提取`：执行“LLM判断边界 + 定向抽取”。
 
 ## 关键工具调用
 ```bash
 # 1) 扫描候选章节（给 agent 做语义边界判定）
-python3 skills/bid-template-extractor/scripts/template_extract.py scan /path/to/tender.docx
+python3 skills/投标模板提取/scripts/template_extract.py scan /path/to/tender.docx
 
 # 2) 按语义判定边界做确定性抽取（生成 docx + 报告）
-python3 skills/bid-template-extractor/scripts/template_extract.py extract \
+python3 skills/投标模板提取/scripts/template_extract.py extract \
   /path/to/tender.docx \
   /path/to/output/doc/<项目名>-投标文件模板.docx \
   --start-heading "第六章 响应文件格式" \
@@ -22,7 +22,7 @@ python3 skills/bid-template-extractor/scripts/template_extract.py extract \
   --report /path/to/output/doc/<项目名>-提取报告.md
 
 # PDF 可编辑优先（pdf2docx，失败时回退到可编辑文本）
-python3 skills/bid-template-extractor/scripts/template_extract.py extract \
+python3 skills/投标模板提取/scripts/template_extract.py extract \
   /path/to/tender.pdf \
   /path/to/output/doc/<项目名>-投标文件模板.docx \
   --start-heading "第四章 响应文件格式" \
