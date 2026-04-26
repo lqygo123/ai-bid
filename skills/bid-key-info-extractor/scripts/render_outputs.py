@@ -507,14 +507,13 @@ def main() -> None:
     md = render_summary_markdown(extract)
     args.summary.write_text(md, encoding="utf-8")
 
-    with tempfile.TemporaryDirectory(prefix="render_bid_key_") as tmp:
-        tmp_root = Path(tmp)
-        source_for_render = resolve_source_for_render(args.source, args.converted_docx, tmp_root)
-        doc = Document(str(source_for_render))
+    tmp_root = Path(tempfile.mkdtemp(prefix="render_bid_key_"))
+    source_for_render = resolve_source_for_render(args.source, args.converted_docx, tmp_root)
+    doc = Document(str(source_for_render))
 
-        all_evidence = collect_all_evidence(extract)
-        highlighted, unresolved = apply_evidence_to_doc(doc, all_evidence)
-        doc.save(str(args.highlighted))
+    all_evidence = collect_all_evidence(extract)
+    highlighted, unresolved = apply_evidence_to_doc(doc, all_evidence)
+    doc.save(str(args.highlighted))
 
     disqualify_evidence = (extract.get("废标项") or {}).get("evidence") or []
     subtype_counts: dict[str, int] = {}

@@ -58,37 +58,36 @@ def load_pdf_lines(input_path: Path, temp_root: Path) -> list[str]:
 
 def load_blocks(input_path: Path) -> tuple[list[dict], str]:
     suffix = input_path.suffix.lower()
-    with tempfile.TemporaryDirectory(prefix="scan_bid_key_") as tmp:
-        temp_root = Path(tmp)
-        source_path = input_path
-        if suffix == ".doc":
-            source_path = convert_doc_to_docx(input_path, temp_root)
-            suffix = ".docx"
-        if suffix == ".pdf":
-            return (
-                [
-                    {"kind": "pdf_line", "locator": f"L{i+1}", "text": row}
-                    for i, row in enumerate(load_pdf_lines(input_path, temp_root))
-                ],
-                "pdf_text",
-            )
-        if suffix != ".docx":
-            raise ValueError(f"Unsupported file type: {input_path.suffix}")
-        body = load_docx_body_via_xml(source_path)
-        if body is None:
-            return [], "docx_xml_blocks"
-        out = []
-        for block in iter_body_blocks(body):
-            if not block["text"]:
-                continue
-            out.append(
-                {
-                    "kind": block["kind"],
-                    "locator": block["locator"],
-                    "text": block["text"],
-                }
-            )
-        return out, "docx_xml_blocks"
+    temp_root = Path(tempfile.mkdtemp(prefix="scan_bid_key_"))
+    source_path = input_path
+    if suffix == ".doc":
+        source_path = convert_doc_to_docx(input_path, temp_root)
+        suffix = ".docx"
+    if suffix == ".pdf":
+        return (
+            [
+                {"kind": "pdf_line", "locator": f"L{i+1}", "text": row}
+                for i, row in enumerate(load_pdf_lines(input_path, temp_root))
+            ],
+            "pdf_text",
+        )
+    if suffix != ".docx":
+        raise ValueError(f"Unsupported file type: {input_path.suffix}")
+    body = load_docx_body_via_xml(source_path)
+    if body is None:
+        return [], "docx_xml_blocks"
+    out = []
+    for block in iter_body_blocks(body):
+        if not block["text"]:
+            continue
+        out.append(
+            {
+                "kind": block["kind"],
+                "locator": block["locator"],
+                "text": block["text"],
+            }
+        )
+    return out, "docx_xml_blocks"
 
 
 def markers_for(text: str) -> list[str]:

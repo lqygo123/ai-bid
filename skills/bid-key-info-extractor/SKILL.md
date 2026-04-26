@@ -67,7 +67,21 @@ python3 skills/bid-key-info-extractor/scripts/scan_tender_structure.py \
 - `废标项.evidence` 的每项必须带 `subtype`（取值见 §1 五类）和 `key_point`（≤ 30 字的浓缩要点，渲染时进表格的"要点"列）。`key_point` 是 agent 复述，不需要 verbatim。
 - `summary` 是 agent 自由复述，要的是可读性；`text_quote` 是锚点，要的是可锚定；`key_point` 是表格抓手，要的是一眼能看懂这一行讲什么。
 
-### 3) Render
+### 3) Agent 生成人读摘要
+
+Agent 读完 `extract.json`，用语义理解直接写 `output/doc/<项目名>-招标核心摘要.md`——不写脚本，纯人写。
+
+**内容结构**（重点在前，废标在后）：
+
+1. 项目概况（名称/编号/采购方式/采购人/代理机构）
+2. 关键时间（紧凑时间线）
+3. 核心要求速览（保证金 / 资格门槛 / 人员社保 / 其它硬性约束，每节 2-5 行）
+4. 废标风险（类型分布表 + **最容易触发的 6-8 项**，压缩呈现）
+5. 提交前自检清单（10-15 条 yes/no 核查项，从 evidence 中提炼）
+
+**原则**：写给人看的，不是写给机器看的。不列逐条 locator，不复制原文长句。用自己的话把条款讲清楚。
+
+### 4) Render
 
 ```bash
 python3 skills/bid-key-info-extractor/scripts/render_outputs.py \
@@ -77,6 +91,8 @@ python3 skills/bid-key-info-extractor/scripts/render_outputs.py \
   --highlighted output/doc/<项目名>-标注.docx \
   --report tmp/docs/<run>/render-report.json
 ```
+
+> 注意：`--summary` 生成的是详细核查用 markdown（废标项大表 + 逐条锚点）。人读摘要由 Agent 在步骤 3 直接生成，不走 render 脚本。
 
 `.doc` 输入：传 `--converted-docx tmp/docs/<run>/converted.docx`（复用 scanner 转出的同一份）。
 `--strict` 在任何 evidence 锚不上时直接失败。
@@ -98,7 +114,7 @@ python3 skills/bid-key-info-extractor/scripts/render_outputs.py \
 ## Working conventions
 
 - 中间产物：`tmp/docs/<run-name>/scan.json`、`extract.json`、`render-report.json`。
-- 最终产物：`output/doc/<项目名>-招标重点.md`、`output/doc/<项目名>-标注.docx`。
+- 最终产物：`output/doc/<项目名>-招标核心摘要.md`（人读）、`output/doc/<项目名>-招标重点.md`（核查）、`output/doc/<项目名>-标注.docx`（标黄）。
 - `<项目名>` 取自 `extract.project_meta.project_name`，缺则用源文件名 stem。
 
 ## Out of scope
