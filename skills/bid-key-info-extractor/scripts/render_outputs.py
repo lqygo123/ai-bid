@@ -332,10 +332,52 @@ def apply_evidence_to_doc(doc, evidence_items):
 # -------------------------- markdown summary --------------------------
 
 
-def _evidence_line(ev: dict) -> str:
-    loc = ev.get("locator", "")
-    quote = (ev.get("text_quote") or "").strip()
-    return f"- `[{loc}]` {quote}"
+def _md_cell(text: str) -> str:
+    """Escape a string for safe placement inside a markdown table cell."""
+    if not text:
+        return ""
+    s = text.replace("\r\n", " ").replace("\n", " ").replace("\r", " ")
+    s = s.replace("|", "\\|")
+    return s.strip()
+
+
+def _render_disqualify_table(disq_evidence: list[dict]) -> list[str]:
+    """Single table, sorted by subtype priority then by original index so
+    rows visually group by 分类 while staying traceable to extract.json."""
+    priority = {st: i for i, st in enumerate(DISQUALIFY_SUBTYPES)}
+    ordered = sorted(
+        enumerate(disq_evidence),
+        key=lambda pair: (priority.get(pair[1].get("subtype", ""), 999), pair[0]),
+    )
+    lines = [
+        "| # | 分类 | 要点 | 情形（原文） | 依据 |",
+        "|---|------|------|------|------|",
+    ]
+    for row_no, (_, ev) in enumerate(ordered, 1):
+        subtype = ev.get("subtype") or "未分类"
+        key_point = _md_cell(ev.get("key_point", ""))
+        quote = _md_cell(ev.get("text_quote", ""))
+        loc = ev.get("locator", "")
+        lines.append(f"| {row_no} | {subtype} | {key_point} | {quote} | `{loc}` |")
+    return lines
+
+
+def _render_key_info_section(idx: int, cat: str, item: dict) -> list[str]:
+    lines = [f"### 2.{idx} {cat}", ""]
+    summary = (item.get("summary") or "").strip()
+    if summary:
+        lines.append(summary)
+        lines.append("")
+    evidence = item.get("evidence") or []
+    if evidence:
+        lines.append("| 要点 | 依据 |")
+        lines.append("|------|------|")
+        for ev in evidence:
+            quote = _md_cell(ev.get("text_quote", ""))
+            loc = ev.get("locator", "")
+            lines.append(f"| {quote} | `{loc}` |")
+        lines.append("")
+    return lines
 
 
 def render_summary_markdown(extract: dict) -> str:
@@ -357,36 +399,27 @@ def render_summary_markdown(extract: dict) -> str:
     disqualify = extract.get("废标项") or {}
     disq_summary = (disqualify.get("summary") or "").strip()
     disq_evidence = disqualify.get("evidence") or []
+
     lines.append(f"## 1. 废标项（共 {len(disq_evidence)} 条）")
     lines.append("")
     if disq_summary:
         lines.append(disq_summary)
         lines.append("")
+
     if disq_evidence:
-        # 按 subtype 分组
-        by_subtype: dict[str, list[dict]] = {st: [] for st in DISQUALIFY_SUBTYPES}
-        extras: dict[str, list[dict]] = {}
+        subtype_counts: dict[str, int] = {}
         for ev in disq_evidence:
             st = ev.get("subtype") or "未分类"
-            if st in by_subtype:
-                by_subtype[st].append(ev)
-            else:
-                extras.setdefault(st, []).append(ev)
-        for st in DISQUALIFY_SUBTYPES:
-            items = by_subtype[st]
-            if not items:
-                continue
-            lines.append(f"### {st}（{len(items)} 条）")
-            lines.append("")
-            for ev in items:
-                lines.append(_evidence_line(ev))
-            lines.append("")
-        for st, items in extras.items():
-            lines.append(f"### {st}（{len(items)} 条）")
-            lines.append("")
-            for ev in items:
-                lines.append(_evidence_line(ev))
-            lines.append("")
+            subtype_counts[st] = subtype_counts.get(st, 0) + 1
+        dist_parts = [f"{st} {subtype_counts[st]}"
+                      for st in DISQUALIFY_SUBTYPES if st in subtype_counts]
+        for st, cnt in subtype_counts.items():
+            if st not in DISQUALIFY_SUBTYPES:
+                dist_parts.append(f"{st} {cnt}")
+        lines.append(f"分布：{' / '.join(dist_parts)}")
+        lines.append("")
+        lines.extend(_render_disqualify_table(disq_evidence))
+        lines.append("")
     else:
         lines.append("_本招标文件中未发现废标触发条款（罕见，建议人工复核）。_")
         lines.append("")
@@ -397,7 +430,7 @@ def render_summary_markdown(extract: dict) -> str:
     extra_categories: list[dict] = []
     for item in key_info:
         cat = item.get("category", "")
-        if cat in KEY_INFO_CATEGORY_ORDER:
+        if cat in KEY_INFO_CATEGORY_ORDER and cat not in by_category:
             by_category[cat] = item
         else:
             extra_categories.append(item)
@@ -410,36 +443,11 @@ def render_summary_markdown(extract: dict) -> str:
             if cat not in by_category:
                 continue
             idx += 1
-            item = by_category[cat]
-            lines.append(f"### 2.{idx} {cat}")
-            lines.append("")
-            summary = (item.get("summary") or "").strip()
-            if summary:
-                lines.append(summary)
-                lines.append("")
-            evidence = item.get("evidence") or []
-            if evidence:
-                lines.append("**原文依据：**")
-                lines.append("")
-                for ev in evidence:
-                    lines.append(_evidence_line(ev))
-                lines.append("")
+            lines.extend(_render_key_info_section(idx, cat, by_category[cat]))
         for item in extra_categories:
             idx += 1
             cat = item.get("category", "（未命名类别）")
-            lines.append(f"### 2.{idx} {cat}")
-            lines.append("")
-            summary = (item.get("summary") or "").strip()
-            if summary:
-                lines.append(summary)
-                lines.append("")
-            evidence = item.get("evidence") or []
-            if evidence:
-                lines.append("**原文依据：**")
-                lines.append("")
-                for ev in evidence:
-                    lines.append(_evidence_line(ev))
-                lines.append("")
+            lines.extend(_render_key_info_section(idx, cat, item))
 
     return "\n".join(lines).rstrip() + "\n"
 

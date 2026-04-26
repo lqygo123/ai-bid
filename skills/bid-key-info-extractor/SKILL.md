@@ -37,8 +37,8 @@ python3 skills/bid-key-info-extractor/scripts/scan_tender_structure.py \
   "废标项": {
     "summary": "本项目废标触发情形包含 ...",
     "evidence": [
-      {"locator": "P142", "text_quote": "投标人有下列情形之一的，其投标将被否决：", "subtype": "显式否决"},
-      {"locator": "T3R5C2", "text_quote": "营业执照不在有效期内的", "subtype": "资格审查"}
+      {"locator": "P142", "text_quote": "投标人有下列情形之一的，其投标将被否决：", "subtype": "显式否决", "key_point": "总则：列出否决情形的引导句"},
+      {"locator": "T3R5C2", "text_quote": "营业执照不在有效期内的", "subtype": "资格审查", "key_point": "营业执照失效"}
     ]
   },
   "重点信息": [
@@ -64,8 +64,8 @@ python3 skills/bid-key-info-extractor/scripts/scan_tender_structure.py \
 - `重点信息` 是数组。**只放找到的类别，没找到的就不出现**——不要写 `present=false` 占位。
 - `category` 取自这 6 个建议值：`中标人数量` / `时间节点` / `保证金` / `资质要求` / `人员社保证明` / `其它硬性规定`。同一 category 不要重复出现，整组 evidence 合并到一个对象里。
 - 每条 evidence 的 `text_quote` 必须是 locator 文本的 **verbatim 子串**（按 `normalize_text` 比较：`\u3000`→空格、连续空白合并、首尾去空）。单条 ≤ 200 字符，不可跨段落。
-- `废标项.evidence` 的每项必须带 `subtype`，取值见 §1 五类。
-- `summary` 是 agent 自由复述，要的是可读性；`text_quote` 是锚点，要的是可锚定。
+- `废标项.evidence` 的每项必须带 `subtype`（取值见 §1 五类）和 `key_point`（≤ 30 字的浓缩要点，渲染时进表格的"要点"列）。`key_point` 是 agent 复述，不需要 verbatim。
+- `summary` 是 agent 自由复述，要的是可读性；`text_quote` 是锚点，要的是可锚定；`key_point` 是表格抓手，要的是一眼能看懂这一行讲什么。
 
 ### 3) Render
 
