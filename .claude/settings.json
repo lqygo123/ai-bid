@@ -1,0 +1,20 @@
+{
+  "skills": {
+    "bid-key-info-extractor": {
+      "description": "从招标文件详尽抽取所有可能导致废标的条款（15-40条，5类subtype），并轻量提炼6类重点信息。输出黄色高亮docx + markdown摘要。",
+      "path": "skills/bid-key-info-extractor/SKILL.md"
+    },
+    "bid-deviation-table": {
+      "description": "语义拆分 + 模板驱动的固定承诺语句偏离表填写。扫描招标文件 → Agent决策行拆分粒度 → 生成rows.json → 填充模板。",
+      "path": "skills/商务和技术偏离表/SKILL.md"
+    },
+    "bid-template-extractor": {
+      "description": "从招标文件提取投标响应模板。Agent语义判断章节边界，脚本确定性复制到独立docx。",
+      "path": "skills/投标模板提取/SKILL.md"
+    },
+    "docx": {
+      "description": "DOCX文档读写、编辑、渲染（python-docx + LibreOffice转PDF审阅）。用于需要格式保真度的文档任务。",
+      "path": "skills/文档/SKILL.md"
+    }
+  }
+}
