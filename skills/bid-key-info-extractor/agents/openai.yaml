@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bid Key-Info Extractor"
+  short_description: "Disqualification-focused extraction with yellow-highlight rendering"
+  default_prompt: "Use $bid-key-info-extractor for a single tender file: run scan, then semantically extract (1) 废标项 — exhaustively, covering all 5 subtypes (显式否决 / 资格审查 / 符合性审查 / 实质性条款 / 散落); typical 15-40 evidence items, and (2) 重点信息 — lightweight 1-3 evidence per found category from {中标人数量, 时间节点, 保证金, 资质要求, 人员社保证明, 其它硬性规定}, omit categories you didn't find. Quotes must be verbatim substrings of their locator's text — never paraphrased. Then render summary.md and 标注.docx."

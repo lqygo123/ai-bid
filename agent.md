@@ -1,39 +1,14 @@
-# agent.md
+# 目标
+这个工程是我在处理我们公司的招投标相关的 AI 工作流， 主要做法是把一些确定性的流程，沉淀为 skill。
 
-## 当前范围
-- 仅实现 `计划.md` 第一步：提取“响应/投标/应答文件格式”并生成模板。
-- 第二步及后续暂不实现。
+## 目前已有 skill
 
-## 关键 skill
-- `$doc`：读取 `.docx/.doc/.pdf`。
-- `$bid-template-extractor`：执行“LLM判断边界 + 定向抽取”。
+信息处理类：
+1. bid-key-info-extractor：从招标 docx 提炼七类硬性信息，输出概要 markdown + 黄色高亮标注 docx
 
-## 关键工具调用
-```bash
-# 1) 扫描候选章节（给 agent 做语义边界判定）
-python3 skills/bid-template-extractor/scripts/template_extract.py scan /path/to/tender.docx
+标书撰写类：
+1. bid-template-extractor： 提出招标文件模板
+2. bid-deviation-table ： 处理标书撰写偏离表
 
-# 2) 按语义判定边界做确定性抽取（生成 docx + 报告）
-python3 skills/bid-template-extractor/scripts/template_extract.py extract \
-  /path/to/tender.docx \
-  /path/to/output/doc/<项目名>-投标文件模板.docx \
-  --start-heading "第六章 响应文件格式" \
-  --start-occurrence 1 \
-  --report /path/to/output/doc/<项目名>-提取报告.md
+校验类：
 
-# PDF 可编辑优先（pdf2docx，失败时回退到可编辑文本）
-python3 skills/bid-template-extractor/scripts/template_extract.py extract \
-  /path/to/tender.pdf \
-  /path/to/output/doc/<项目名>-投标文件模板.docx \
-  --start-heading "第四章 响应文件格式" \
-  --start-occurrence 1 \
-  --pdf-converter pdf2docx \
-  --pdf-fallback-mode text \
-  --report /path/to/output/doc/<项目名>-提取报告.md
-```
-
-## 边界判定要点
-- 起点必须是正文中的格式章节，不能用目录里的同名项。
-- 同名章节多次出现时，用 `--start-occurrence` 指向正文那次。
-- 自动截断不稳时，补 `--end-heading`（必要时 `--match-mode contains`）。
-- 禁止关键词规则自动选章，边界必须由 agent 语义判断给出。
