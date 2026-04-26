@@ -1,10 +1,10 @@
 ---
-name: "doc"
+name: "文档"
 description: "Use when the task involves reading, creating, or editing `.docx` documents, especially when formatting or layout fidelity matters; prefer `python-docx` plus the bundled `scripts/render_docx.py` for visual checks."
 ---
 
 
-# DOCX Skill
+# 文档技能
 
 ## When to use
 - Read or review DOCX content where layout matters (tables, diagrams, pagination).

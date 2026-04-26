@@ -1,9 +1,9 @@
 ---
-name: bid-deviation-table
+name: 商务和技术偏离表
 description: Workflow skill for 商务和技术偏离表 using semantic splitting plus template-driven fixed-commitment filling. Use when you need to read one tender file, decide row splitting semantically for that file, generate rows.json, and write those rows back into a deviation-table template without coupling to a specific table shape.
 ---
 
-# Bid Deviation Table
+# 商务和技术偏离表
 
 This skill is a workflow skill, not a fixed parser and not a fixed table-format adapter.
 
@@ -62,7 +62,7 @@ Write those run-specific files under `tmp/docs/<run-name>/`.
 Run the generic scanner first.
 
 ```bash
-python3 skills/bid-deviation-table/scripts/scan_tender_structure.py \
+python3 skills/商务和技术偏离表/scripts/scan_tender_structure.py \
   /path/to/tender.docx \
   --json > /tmp/scan.json
 ```
@@ -107,7 +107,7 @@ Review `rows.json` before filling.
 Quick check:
 
 ```bash
-python3 skills/bid-deviation-table/scripts/validate_rows.py \
+python3 skills/商务和技术偏离表/scripts/validate_rows.py \
   /path/to/rows.json
 ```
 
@@ -122,7 +122,7 @@ Minimum checks:
 Run the generic fill script:
 
 ```bash
-python3 skills/bid-deviation-table/scripts/fill_deviation_table.py \
+python3 skills/商务和技术偏离表/scripts/fill_deviation_table.py \
   /path/to/template.docx \
   /path/to/rows.json \
   /path/to/output.docx
@@ -148,7 +148,7 @@ The extraction logic is not.
 - If scan output misses text because it only came from tables, fix the scan step first rather than compensating in the extractor.
 
 ## Working Conventions
-- Reusable scripts live in `skills/bid-deviation-table/scripts/`.
+- Reusable scripts live in `skills/商务和技术偏离表/scripts/`.
 - Run artifacts live in `tmp/docs/<run-name>/`.
 - Keep reusable scripts generic and inspection-oriented.
 - Keep run-specific scripts disposable.

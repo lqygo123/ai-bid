@@ -1,9 +1,9 @@
 ---
-name: bid-template-extractor
+name: 投标模板提取
 description: Extract bid/response document templates from tender files using LLM semantic boundary judgment plus deterministic section copying. Use when processing one .docx/.doc/.pdf tender document and you need reusable template outputs for downstream auto-fill.
 ---
 
-# Bid Template Extractor
+# 投标模板提取
 
 Use this skill as:
 1. Agent does semantic boundary decision.

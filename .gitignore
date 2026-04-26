@@ -50,6 +50,7 @@ Thumbs.db
 # Project specific directories
 output/
 tmp/
+tmp_review/
 *.log
 
 demo/*
@@ -58,7 +59,10 @@ demo/*
 # Office temporary files
 ~$*.doc
 ~$*.docx
+~$*.docm
 ~$*.xls
 ~$*.xlsx
+~$*.xlsm
 ~$*.ppt
 ~$*.pptx
+~$*.pptm
