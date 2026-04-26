@@ -35,7 +35,7 @@ uv pip install python-docx pdf2image
 ```
 If `uv` is unavailable:
 ```
-python3 -m pip install python-docx pdf2image
+python -m pip install python-docx pdf2image
 ```
 System tools (for rendering):
 ```
@@ -64,7 +64,7 @@ pdftoppm -png $OUTDIR/$BASENAME.pdf $OUTDIR/$BASENAME
 
 Bundled helper:
 ```
-python3 scripts/render_docx.py /path/to/file.docx --output_dir /tmp/docx_pages
+python scripts/render_docx.py /path/to/file.docx --output_dir /tmp/docx_pages
 ```
 
 ## Quality expectations

@@ -62,7 +62,7 @@ Write those run-specific files under `tmp/docs/<run-name>/`.
 Run the generic scanner first.
 
 ```bash
-python3 skills/商务和技术偏离表/scripts/scan_tender_structure.py \
+python skills/商务和技术偏离表/scripts/scan_tender_structure.py \
   /path/to/tender.docx \
   --json > /tmp/scan.json
 ```
@@ -107,7 +107,7 @@ Review `rows.json` before filling.
 Quick check:
 
 ```bash
-python3 skills/商务和技术偏离表/scripts/validate_rows.py \
+python skills/商务和技术偏离表/scripts/validate_rows.py \
   /path/to/rows.json
 ```
 
@@ -122,7 +122,7 @@ Minimum checks:
 Run the generic fill script:
 
 ```bash
-python3 skills/商务和技术偏离表/scripts/fill_deviation_table.py \
+python skills/商务和技术偏离表/scripts/fill_deviation_table.py \
   /path/to/template.docx \
   /path/to/rows.json \
   /path/to/output.docx

@@ -18,7 +18,7 @@ description: 招标重点信息提取 workflow skill — 详尽抽取所有可�
 
 ### 1) Scan
 ```bash
-python3 skills/bid-key-info-extractor/scripts/scan_tender_structure.py \
+python skills/bid-key-info-extractor/scripts/scan_tender_structure.py \
   /path/to/tender.docx --json > tmp/docs/<run>/scan.json
 ```
 
@@ -84,7 +84,7 @@ Agent 读完 `extract.json`，用语义理解直接写 `output/doc/<项目名>-�
 ### 4) Render
 
 ```bash
-python3 skills/bid-key-info-extractor/scripts/render_outputs.py \
+python skills/bid-key-info-extractor/scripts/render_outputs.py \
   --extract tmp/docs/<run>/extract.json \
   --source /path/to/tender.docx \
   --summary output/doc/<项目名>-招标重点.md \

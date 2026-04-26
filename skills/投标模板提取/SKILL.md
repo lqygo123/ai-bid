@@ -15,9 +15,9 @@ Use this skill as:
 Run scan and review candidate lines before extraction.
 
 ```bash
-python3 scripts/template_extract.py scan /path/to/tender.docx
-python3 scripts/template_extract.py scan /path/to/tender.doc
-python3 scripts/template_extract.py scan /path/to/tender.pdf
+python scripts/template_extract.py scan /path/to/tender.docx
+python scripts/template_extract.py scan /path/to/tender.doc
+python scripts/template_extract.py scan /path/to/tender.pdf
 ```
 
 Focus on:
@@ -39,7 +39,7 @@ Typical decision output:
 ### 3) Deterministic extract
 
 ```bash
-python3 scripts/template_extract.py extract \
+python scripts/template_extract.py extract \
   /path/to/tender.docx \
   /path/to/output-template.docx \
   --start-heading "第六章 响应文件格式" \
@@ -50,7 +50,7 @@ python3 scripts/template_extract.py extract \
 For editable PDF extraction:
 
 ```bash
-python3 scripts/template_extract.py extract \
+python scripts/template_extract.py extract \
   /path/to/tender.pdf \
   /path/to/output-template.docx \
   --start-heading "第四章 响应文件格式" \
@@ -63,7 +63,7 @@ python3 scripts/template_extract.py extract \
 When auto stop is ambiguous:
 
 ```bash
-python3 scripts/template_extract.py extract \
+python scripts/template_extract.py extract \
   /path/to/tender.docx \
   /path/to/output-template.docx \
   --start-heading "第五章 谈判应答文件格式" \
