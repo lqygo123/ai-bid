@@ -54,6 +54,7 @@ tmp_review/
 *.log
 
 demo/*
+招标文件示例/*
 
 # Office temporary files
 ~$*.doc
